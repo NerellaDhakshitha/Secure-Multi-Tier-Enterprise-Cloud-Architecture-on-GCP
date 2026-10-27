@@ -12,7 +12,7 @@ This hands-on project helped me understand core GCP networking, access managemen
 
 ## Architecture Diagram
 
-![Secure Multi-Tier Enterprise Cloud Architecture on GCP](Architecture.png)
+![Secure Multi-Tier Enterprise Cloud Architecture on GCP](Architecture.drawio.png)
 
 ### Architecture Components
 
