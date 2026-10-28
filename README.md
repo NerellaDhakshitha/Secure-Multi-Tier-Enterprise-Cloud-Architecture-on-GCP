@@ -1,138 +1,225 @@
 # Secure Multi-Tier Enterprise Cloud Architecture on GCP
 
+A hands-on Google Cloud Platform (GCP) project focused on designing and configuring a secure cloud network with private compute resources, controlled administrative access, IAM permissions, Cloud Storage, and web-server deployment.
+
 ## Project Overview
 
-This project focuses on building a segmented and secure cloud environment using Google Cloud Platform (GCP). The objective was to isolate network resources, keep the backend application server private, enable secure administrative access, and manage access to cloud storage through IAM.
+This project demonstrates the implementation of a multi-tier cloud infrastructure on Google Cloud Platform. It uses a custom Virtual Private Cloud (VPC), separate subnets for the bastion host and private application server, firewall rules, Cloud NAT, Identity and Access Management (IAM), and Cloud Storage.
 
-I configured a custom VPC, separate subnets for the bastion host and private application server, Cloud NAT for outbound connectivity, and service-account-based access to Google Cloud Storage. I also deployed a simple webpage on the private VM to validate the web server configuration.
+A web page is hosted on an Apache web server running on a private Compute Engine virtual machine. The application VM has no external IP address and can be accessed through the configured administrative access path. The VM's service account is also used to access a private Cloud Storage bucket.
 
-This hands-on project helped me understand core GCP networking, access management, Compute Engine, and cloud storage concepts.
+The objective is to gain practical experience with cloud networking, compute infrastructure, access control, and basic cloud security.
 
----
-
-## Architecture Diagram
+## Architecture
 
 ![Secure Multi-Tier Enterprise Cloud Architecture on GCP](Architecture.drawio.png)
 
 ### Architecture Components
 
-- **Custom VPC (`enterprise-vpc`):** Provides the network environment for the project.
-- **Bastion Subnet (`10.0.1.0/24`):** Contains the bastion host used as an administrative entry point to the private application VM.
-- **Private Subnet (`10.0.2.0/24`):** Contains the backend application server, configured without an external IP address.
-- **Cloud Router and Cloud NAT:** Provide outbound connectivity for eligible private resources, including software package updates.
-- **Google Cloud Storage (GCS):** Stores test files and uses IAM-controlled access.
-
----
-
-## Google Cloud Services Used
-
-| Service | Purpose |
+| Component | Purpose |
 |---|---|
-| Virtual Private Cloud (VPC) | Network isolation and resource organization |
-| VPC Subnets | Separate network address ranges |
-| Compute Engine | Hosts the bastion and application VMs |
-| Identity-Aware Proxy (IAP) | Secure administrative access |
-| Cloud Router and Cloud NAT | Outbound connectivity for private resources |
-| Firewall Rules | Control permitted network traffic |
-| Identity and Access Management (IAM) | Manage permissions for cloud resources |
-| Cloud Storage | Store and upload files using authorized access |
+| Google Cloud VPC | Provides an isolated cloud network for project resources. |
+| Bastion host | Provides an administrative access path to the private application VM. |
+| Subnets | Separate the bastion host and private application server into different network segments. |
+| Firewall rules | Control permitted network traffic to and within the VPC. |
+| Cloud Router and Cloud NAT | Provide outbound internet connectivity for eligible private VM traffic without requiring an external IP on the VM. |
+| Compute Engine | Hosts the private application server. |
+| Apache HTTP Server | Serves the project's demonstration webpage. |
+| IAM service account | Provides an identity for authenticated access to Google Cloud resources. |
+| Cloud Storage | Stores a test object in a non-public regional bucket. |
 
----
+## Technologies and Services
+
+- Google Cloud Platform (GCP)
+- Virtual Private Cloud (VPC)
+- VPC subnets and firewall rules
+- Compute Engine
+- Bastion-host access
+- Cloud Router and Cloud NAT
+- Identity and Access Management (IAM)
+- Cloud Storage
+- Debian Linux
+- Apache HTTP Server
+- Linux shell and Google Cloud CLI (`gcloud`)
 
 ## Implementation Details
 
-### 1. Custom VPC and Network Segmentation
+### 1. VPC and Network Segmentation
 
-Created a custom VPC named `enterprise-vpc` and configured separate subnet ranges for the bastion host and backend application server.
+Created a custom VPC with separate subnets for administrative access and the private application server.
 
-- Bastion subnet: `10.0.1.0/24`
-- Private subnet: `10.0.2.0/24`
+| Resource | Configuration |
+|---|---|
+| Bastion subnet | `10.0.1.0/24` |
+| Private application subnet | `10.0.2.0/24` |
+| Private application VM internal IP | `10.0.2.2` |
 
-This design separates the administrative entry point from the private application workload.
+The separate subnets provide a foundation for isolating administrative and application resources.
 
-### 2. Bastion Host and Secure Administrative Access
+### 2. Private Compute Engine VM
 
-Configured a Compute Engine VM named `bastion-host` to provide an administrative entry point to the private application server.
+Created a Compute Engine virtual machine named `private-app-server` with Debian Linux.
 
-Used Identity-Aware Proxy (IAP) for secure SSH access and an internal SSH connection from the bastion host to the private VM. This avoids exposing the backend VM directly to the public internet.
+| Setting | Value |
+|---|---|
+| VM name | `private-app-server` |
+| Zone | `us-central1-b` |
+| Operating system | Debian |
+| Internal IP | `10.0.2.2` |
+| External IP | None |
+| Web server | Apache HTTP Server |
 
-### 3. Private Application Server and Webpage Deployment
+The VM was accessed through the configured bastion-host administrative path.
 
-Configured a Debian-based Compute Engine VM named `private-app-server` in the private subnet.
+### 3. Web Server Deployment
 
-- **Internal IP:** `10.0.2.2`
-- **External IP:** None
-- **Web server:** Apache
-- **Web port:** TCP 80
+Deployed a demonstration webpage on the private VM using Apache HTTP Server.
 
-Deployed a simple HTML webpage titled **Secure Multi-Tier Enterprise Cloud Architecture** to demonstrate that the web server was running.
+The page displays the project title, a successful deployment message, the compute platform, and the web-server details.
 
-Verified the webpage locally using `curl` and checked the process listening on port 80. Since the VM has no external IP, I also used an IAP SSH tunnel through Google Cloud Shell and Cloud Shell Web Preview to view the webpage from a browser.
-
-### 4. Cloud NAT and Outbound Connectivity
-
-Configured Cloud NAT with Cloud Router to support outbound internet connectivity for eligible private resources.
-
-This allows the private application VM to access external resources, such as software package repositories, without requiring an external IP address. Cloud NAT is a managed service associated with Cloud Router; it is not a VM hosted inside the public subnet.
-
-### 5. Cloud Storage and IAM Integration
-
-Configured service-account permissions for access to a Google Cloud Storage bucket.
-
-Tested uploading a file using the Google Cloud CLI, demonstrating how a Compute Engine workload can access cloud storage without requiring a hardcoded service-account key file.
-
-The configured `Storage Object Admin` role provides object-management permissions. For a production workload, permissions should be narrowed to the minimum required operations.
-
----
-
-## Testing and Execution Proofs
-
-### 1. Verify the Web Server
-
-Run the following command on the application VM:
+Verified that the web server responds successfully from within the VM.
 
 ```bash
 curl -I http://localhost
 ```
 
-This checks whether the local web server responds to HTTP requests.
+Expected result: an HTTP success response, such as `HTTP/1.1 200 OK`.
 
-### 2. Identify the Service Listening on Port 80
+To inspect the listening service:
 
 ```bash
 sudo ss -ltnp | grep ':80'
 ```
 
-This helps identify the process listening on the web server port.
+These checks confirm that the web server is running and listening on port 80.
 
-### 3. Upload a Test File to Google Cloud Storage
+### 4. Bastion-Host Access
+
+Connected to the private application VM through the configured bastion-host access path.
+
+This demonstrates an administrative access pattern in which the application VM does not need a public IP address to be managed.
+
+The actual access path and the applicable firewall rules are documented in the architecture diagram and supporting screenshots.
+
+### 5. Cloud NAT and Outbound Connectivity
+
+Configured Cloud NAT with Cloud Router to support outbound connectivity for eligible resources in the private network.
+
+Cloud NAT allows supported outbound connections without requiring the private application VM to have an external IP address. It does not, by itself, provide unsolicited inbound connectivity to the VM.
+
+### 6. Cloud Storage Integration
+
+Created a regional, non-public Cloud Storage bucket:
+
+`enterprise-app-bucket-dhakshith-2026`
+
+Uploaded a test object named `test.txt` and verified access from the private application VM using the Google Cloud CLI.
+
+List objects in the bucket:
 
 ```bash
-gcloud storage cp test.txt gs://enterprise-app-bucket-dhakshith-2026/
+gcloud storage ls gs://enterprise-app-bucket-dhakshith-2026/
 ```
 
-**Observed result:**
+Read the contents of the test object:
+
+```bash
+gcloud storage cat gs://enterprise-app-bucket-dhakshith-2026/test.txt
+```
+
+Expected test output:
 
 ```text
-Copying file://test.txt to gs://enterprise-app-bucket-dhakshith-2026/test.txt
-Operation completed.
+GCP Cloud Storage verification
 ```
 
-### 4. Access the Private Webpage
+Both commands completed successfully using the active Compute Engine default service account.
 
-The application VM does not have an external IP address. To view the webpage, I established an IAP SSH tunnel from Google Cloud Shell and used **Web Preview → Preview on port 8080**.
+### 7. IAM and Access Control
 
-This provided a way to validate the webpage without exposing the application server directly to the public internet.
+Verified the Compute Engine default service account used by the VM:
 
----
+`624900597663-compute@developer.gserviceaccount.com`
 
-## Key Learnings
+The service account has the `Storage Object Admin` role on the bucket. This role permits object-level operations, including listing, reading, creating, and deleting objects.
 
-- Configuring a custom VPC and subnet address ranges
-- Understanding private Compute Engine instances and external IP addresses
-- Using a bastion host and IAP for administrative access
-- Configuring Cloud NAT for outbound connectivity
-- Managing network traffic through firewall rules
-- Working with IAM permissions and service accounts
-- Deploying and troubleshooting an Apache web server
-- Uploading files to Cloud Storage using the Google Cloud CLI
+The bucket has Public Access Prevention enabled and is not publicly accessible.
+
+**Security consideration:** `Storage Object Admin` is broader than required for a read-only application. A production deployment should use least-privilege permissions appropriate to the application's actual requirements.
+
+## Execution Evidence
+
+The following screenshots document the deployed infrastructure and verification steps.
+
+| Screenshot | Evidence |
+|---|---|
+| `screenshots/deployed-webpage.png` | Demonstration webpage served by Apache. |
+| `screenshots/private-vm-details.png` | Compute Engine VM details, including the absence of an external IP. |
+| `screenshots/vpc-subnets.png` | VPC and subnet configuration. |
+| `screenshots/bastion-private-vm-connection.png` | Successful administrative connection to the private VM. |
+| `screenshots/cloud-storage-object.png` | Test object stored in the Cloud Storage bucket. |
+| `screenshots/cloud-storage-read-test.png` | Successful command output showing the contents of `test.txt`. |
+| `screenshots/cloud-storage-iam.png` | Service account and its bucket-level IAM role. |
+| `screenshots/bucket-security.png` | Regional bucket configuration and Public Access Prevention status. |
+| `screenshots/firewall-rules.png` | Configured VPC firewall rules. |
+
+### Web Application
+
+![Deployed webpage](screenshots/deployed-webpage.png)
+
+### Private VM Configuration
+
+![Private Compute Engine VM](screenshots/private-vm-details.png)
+
+### VPC and Subnets
+
+![VPC and subnet configuration](screenshots/vpc-subnets.png)
+
+### Private VM Administrative Access
+
+![Bastion host connection to private VM](screenshots/bastion-private-vm-connection.png)
+
+### Cloud Storage Verification
+
+![Cloud Storage object](screenshots/cloud-storage-object.png)
+
+![Successful Cloud Storage read test](screenshots/cloud-storage-read-test.png)
+
+### IAM Permissions
+
+![Cloud Storage IAM permissions](screenshots/cloud-storage-iam.png)
+
+### Bucket Security
+
+![Cloud Storage bucket security configuration](screenshots/bucket-security.png)
+
+### Firewall Rules
+
+![VPC firewall rules](screenshots/firewall-rules.png)
+
+## Security Considerations
+
+- The application VM has no external IP address.
+- Administrative access is provided through the configured access path.
+- VPC firewall rules govern permitted network traffic.
+- Cloud Storage Public Access Prevention is enabled.
+- The VM uses a service account to authenticate Google Cloud CLI operations.
+- IAM permissions should follow the principle of least privilege.
+- Firewall rules should allow only the required source ranges, protocols, ports, and targets.
+
+This is a learning project and should not be considered production-hardened without additional security review, monitoring, and operational controls.
+
+## Key Learning Outcomes
+
+Through this project, I gained hands-on experience with:
+
+- Creating and organizing a custom VPC and subnets.
+- Deploying a private Compute Engine virtual machine.
+- Accessing private infrastructure through a bastion-host access path.
+- Deploying and validating an Apache web server on Debian Linux.
+- Configuring Cloud Router and Cloud NAT for outbound connectivity.
+- Using service accounts and IAM permissions for Cloud Storage access.
+- Verifying bucket privacy and Public Access Prevention.
+- Troubleshooting cloud permissions and validating infrastructure through command-line tests.
+- Documenting cloud architecture and implementation evidence in GitHub.
+
