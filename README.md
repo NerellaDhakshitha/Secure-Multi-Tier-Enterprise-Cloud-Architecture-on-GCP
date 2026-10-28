@@ -153,50 +153,49 @@ The following screenshots document the deployed infrastructure and verification 
 
 | Screenshot | Evidence |
 |---|---|
-| `screenshots/deployed-webpage.png` | Demonstration webpage served by Apache. |
-| `screenshots/private-vm-details.png` | Compute Engine VM details, including the absence of an external IP. |
-| `screenshots/vpc-subnets.png` | VPC and subnet configuration. |
-| `screenshots/bastion-private-vm-connection.png` | Successful administrative connection to the private VM. |
-| `screenshots/cloud-storage-object.png` | Test object stored in the Cloud Storage bucket. |
-| `screenshots/cloud-storage-read-test.png` | Successful command output showing the contents of `test.txt`. |
-| `screenshots/cloud-storage-iam.png` | Service account and its bucket-level IAM role. |
-| `screenshots/bucket-security.png` | Regional bucket configuration and Public Access Prevention status. |
-| `screenshots/firewall-rules.png` | Configured VPC firewall rules. |
+| `execution screenshots/deployed-webpage.png` | Demonstration webpage served by Apache. |
+| `execution screenshots/VM_Configuration.png` | Compute Engine VM details, including the absence of an external IP. |
+| `execution screenshots/vpc-subnets.png` | VPC and subnet configuration. |
+| `execution screenshots/bastion-private-vm-connection.png` | Successful administrative connection to the private VM. |
+| `execution screenshots/cloud-storage-object.png` | Test object stored in the Cloud Storage bucket. |
+| `execution screenshots/cloud-storage-read-test.png` | Successful command output showing the contents of `test.txt`. |
+| `execution screenshots/cloud-storage-iam.png` | Service account and its bucket-level IAM role. |
+| `execution screenshots/bucket-security.png` | Regional bucket configuration and Public Access Prevention status. |
+| `execution screenshots/firewall-rules.png` | Configured VPC firewall rules. |
 
 ### Web Application
 
-![Deployed webpage](deployed-webpage.png)
+![Deployed webpage](execution%20screenshots/deployed-webpage.png)
 
 ### Private VM Configuration
 
-![Private Compute Engine VM](VM_Configuration.png)
+![Private Compute Engine VM](execution%20screenshots/VM_Configuration.png)
 
 ### VPC and Subnets
 
-![VPC and subnet configuration](vpc-subnets.png)
+![VPC and subnet configuration](execution%20screenshots/vpc-subnets.png)
 
 ### Private VM Administrative Access
 
-![Bastion host connection to private VM](bastion-private-vm-connection.png)
+![Bastion host connection to private VM](execution%20screenshots/bastion-private-vm-connection.png)
 
 ### Cloud Storage Verification
 
-![Cloud Storage object](cloud-storage-object.png)
+![Cloud Storage object](execution%20screenshots/cloud-storage-object.png)
 
-![Successful Cloud Storage read test](cloud-storage-read-test.png)
+![Successful Cloud Storage read test](execution%20screenshots/cloud-storage-read-test.png)
 
 ### IAM Permissions
 
-![Cloud Storage IAM permissions](cloud-storage-iam.png)
+![Cloud Storage IAM permissions](execution%20screenshots/cloud-storage-iam.png)
 
 ### Bucket Security
 
-![Cloud Storage bucket security configuration](bucket-security.png)
+![Cloud Storage bucket security configuration](execution%20screenshots/bucket-security.png)
 
 ### Firewall Rules
 
-![VPC firewall rules](firewall-rules.png)
-
+![VPC firewall rules](execution%20screenshots/firewall-rules.png)
 ## Security Considerations
 
 - The application VM has no external IP address.
