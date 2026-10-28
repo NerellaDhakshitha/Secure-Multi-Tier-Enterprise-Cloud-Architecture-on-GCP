@@ -165,37 +165,37 @@ The following screenshots document the deployed infrastructure and verification 
 
 ### Web Application
 
-![Deployed webpage](screenshots/deployed-webpage.png)
+![Deployed webpage](deployed-webpage.png)
 
 ### Private VM Configuration
 
-![Private Compute Engine VM](screenshots/private-vm-details.png)
+![Private Compute Engine VM](VM_Configuration.png)
 
 ### VPC and Subnets
 
-![VPC and subnet configuration](screenshots/vpc-subnets.png)
+![VPC and subnet configuration](vpc-subnets.png)
 
 ### Private VM Administrative Access
 
-![Bastion host connection to private VM](screenshots/bastion-private-vm-connection.png)
+![Bastion host connection to private VM](bastion-private-vm-connection.png)
 
 ### Cloud Storage Verification
 
-![Cloud Storage object](screenshots/cloud-storage-object.png)
+![Cloud Storage object](cloud-storage-object.png)
 
-![Successful Cloud Storage read test](screenshots/cloud-storage-read-test.png)
+![Successful Cloud Storage read test](cloud-storage-read-test.png)
 
 ### IAM Permissions
 
-![Cloud Storage IAM permissions](screenshots/cloud-storage-iam.png)
+![Cloud Storage IAM permissions](cloud-storage-iam.png)
 
 ### Bucket Security
 
-![Cloud Storage bucket security configuration](screenshots/bucket-security.png)
+![Cloud Storage bucket security configuration](bucket-security.png)
 
 ### Firewall Rules
 
-![VPC firewall rules](screenshots/firewall-rules.png)
+![VPC firewall rules](firewall-rules.png)
 
 ## Security Considerations
 
